@@ -90,21 +90,38 @@ def checkLetter(letter, missedLetter):
     else:
         switch = True
     return switch
-        
-# def printWord(aList):
-#     # This function prints the word from list with spaces between the letters
-#     for char in aList:
-#       print(char, )
 
+def checkWord(animal, letter, wordList):
+    # This function checks if the letter is in the word.
+    # It will return an integer for the correct guesses or 0 for no correct guess.
+    correctGuess = 0
+
+    for i in range(len(animal)):
+      if animal[i] == letter.upper():
+        correctGuess += 1
+        wordList[i] == letter.upper()
+    
+    return correctGuess
+        
 def printStuff(life, missedLetter, wordList):
-    # This function 
+    # This function prints current in-game information each time
     print(hangmanPic[life])
     print("\nMissed letters: ")
     print(*missedLetter)
     print()
-    # printWord(missedLetter)
     print(*wordList)
-    # printWord(wordList)
+
+def question():
+    # This function asks the user to exit the program or not and return a boolean value for the input
+    switch = True
+    question = input("Do you want to play again? (y/n) ")
+    while question.lower() not in ['y', 'n']:
+        print("Please enter y or n")
+        question = input("Do you want to play again? (y/n) ")
+    if question.lower() == 'n':
+        switch = False
+    return switch
+
 
 def main():
     # This is the mainline of the program
@@ -123,15 +140,32 @@ def main():
     while programSwitch:
         life = 0
         missedLetter = []
-        animal = randomWord()
+        animal = randomWord().upper()
+        correctGuessCounter = 0
         wordList = appendList(animal)
+        print(animal)
         printStuff(life, missedLetter, wordList)
         gameSwitch = True
         while gameSwitch:
             letter = inputLetter(missedLetter)
-            print(letter)
-            gameSwitch = False #temp code to prevent infinity loops
-        programSwitch = False #temp code to prevent infinity loops
+            correctGuess = checkWord(animal, letter, wordList)
+            if correctGuess > 0:
+                correctGuessCounter += correctGuess
+            else:
+              life += 1
+              missedLetter.append(letter.upper())
+            
+            if correctGuessCounter == len(animal):
+                print(f"Yes! The secret word is {animal}! You have won!")
+                gameSwitch = False
+            else:
+                printStuff(life, missedLetter, wordList)
 
+                if life == len(hangmanPic):
+                    print("You have run out of guesses!")
+                    print(f"After {life} missed guesses and {correctGuessCounter} correct guesses, the word was \"{animal}\"")
+                    gameSwitch = False
+        programSwitch = question()
+ 
 if __name__ == "__main__":
     main()
